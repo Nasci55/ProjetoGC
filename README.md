@@ -1,7 +1,13 @@
 # Relatório Computação Gráfica / Licenças
 
-Trabalho feito por:
-- Gonçalo Nascimento
+Trabalho feito por: 
+- Gonçalo Nascimento a22402299
+
+
+# Aviso prévio
+Devido a um erro com o git lfs as scenes dentro do projeto não correspondem com as das imagens demonstradas neste relatório.
+
+
 # Toon Shader
 Para este shader utilizei como base o shader dado pelo professor durante as aulas.
 ## Cel Shading
