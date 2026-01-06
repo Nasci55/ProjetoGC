@@ -14,11 +14,17 @@ Para este shader utilizei como base o shader dado pelo professor durante as aula
 Inicialmente optei por fazer a parte do cel shading primeiro. 
 Para atingir este efeito adaptei o cálculo "Lambertiano" para que fizesse um smoothstep[^1] usando o produto escalar das normais com a luz. 
 Desta maneira alcancei o objetivo pretentido com o cel shading, podendo alterar os valores no editor.
-![Im1](ImagensRelatorio/Imagem1)
+
+![Imagem1](ImagensRelatorio/Imagem1.png)
+
 Após isso adicionei suporte para texturas
-![Im2](ImagensRelatorio/Imagem2)
+
+![Im2](ImagensRelatorio/Imagem2.png)
+
 Depois de adicionar o suporte para texturas notei que toon shader apenas com 2 bands não era ideal, então adicionei uma band intermediária retirando o smoothstep adiconado previamente e fazendo uma lógica com um sistema de if's.
-![Im3](ImagensRelatorio/Imagem3)
+
+![Im3](ImagensRelatorio/Imagem3.png)
+
 ## Outline
 Inicialmente o outline iria ser feito com edge detection. O cálculo usado será o de Roberts cross.
 Este efeito terá que ser feito pelo camera renderer e terá como base o script dado pelo professor no TPC 6.
@@ -71,7 +77,8 @@ Adicionei também um cálculo para suavizar o efeito com a distância, pegando n
 
 Adicionei suporte para sombras e luzes mas como foi feito a seguir ao shader seguinte acabei por copiar um pouco a mesma lógica. 
 No final o efeito ficou:
-![Im22](ImagensRelatorio/Imagem22)
+
+![Im22](ImagensRelatorio/Imagem22.png)
 
 
 --------------------------------------------------------------------------
@@ -79,9 +86,12 @@ No final o efeito ficou:
 # WaterColor Shader
 Para fazer o watercolor shader irei utilizar novamente camera renderer e utilizar mais uma vez, como base, o script do professor. Irei fazer este shader utilizando o filtro Kuwahara[^3] visto que este aplica um filtro de blur e simultaneamente preserva as edges.
 Primeiramente tirei samples dos pixeis das diagonais, tirei um sample da textura e aqui acabei por fazer dois cálculos diferentes. Inicialmente ao estudar o efeito entendi que o objetivo era ficar com o sample com menos diferenciação de cor então inicialmente foi o que eu fiz:
-![Im5](ImagensRelatorio/Imagem5)
+
+![Im4](ImagensRelatorio/Imagem4.png)
+
 Após isso experimentei um cálculo diferente, invés de ir buscar apenas o valor que tem menos diferenciação, acabei por fazer uma média de todos os pixeis que deu este resultado:
-![Im6](ImagensRelatorio/Imagem6)
+
+![Im6](ImagensRelatorio/Imagem5.png)
 
 Atualmente o código é :
 ``` HLSL
@@ -163,7 +173,8 @@ Experimentei um value noise, mas a imagem parecia suja então acabei por procura
 
 Ao explorar um pouco mais imagens de desenhos apercebi-me que o efeito Kuwahara não era o que eu queria. Um dos grandes objetivo do Kuwahara é um blur que preserve as edges, em pintura aguarelas não é de todo isso que se quer. Acabei por deixar o efeito Kuwahara no projeto até porque acho que fica um efeito interessante, mas para uma pintura sem ser aguarela.
 Mesmo assim fica aqui o efeito final:
-![Im23](ImagensRelatorio/Imagem23)
+
+![Im23](ImagensRelatorio/Imagem23.png)
 
 Após ter recomeçado deparei-me com o seguinte video  "Turn 3D into watercolor magic: step-by-step shader tutorial"[^5] que serviu como base/passos do que eu teria que fazer para alcançar o Watercolor shader.
 
@@ -191,10 +202,12 @@ float BlurEdgeMask(float2 uv)
 Subtraindo esta mask à imagem original foi possível começar a observar o blend de cores que é pretendido com um watercolor effect:
 
 Scene Mode:
-![Im8](ImagensRelatorio/Imagem8)
+
+![Im6](ImagensRelatorio/Imagem6.png)
 
 Game Mode:
-![Im9](ImagensRelatorio/Imagem9)
+
+![Im7](ImagensRelatorio/Imagem7.png)
 
 O outline escuro estava demasiado proeminente e ainda não estava irregular como era suposto. 
 Após algumas tentativas falhadas de aplicar tipos de noise utilizando uma função com senos e de atenuar o outline acabei por perceber que não fazia grande sentido estar a utilizar outlines com base na profundidade, o meu objetivo neste caso é notar variações de cor, como se o artista tivesse a pintar com cores diferentes a tela, ou seja passei a utlizar um outline que deteta variações de cor e não de diferenças de profundidade.
@@ -202,49 +215,68 @@ Outra alteração que fiz foi passar todos o espaço em que estou a trabalhar pa
 Até este momento a fazer o watercolor shader acabei por ignorar muito o material dos objetos, julguei que era um efeito que era totalmente feito num Full Screen Pass Renderer, mas após ver outras maneiras de como algumas pessoas estavam a fazer este tipo de shader percebi que os materiais dos objetos são extremamente essenciais para a realização deste shader, então comecei a focar-me nos materiais dos objetos em si. 
 
 Para começar a fazer o shader do material comecei por tentar fazer o material parecer-se um pouco com esta imagem:
-![Im10](ImagensRelatorio/Imagem10)
+
+![Im8](ImagensRelatorio/Imagem8.png)
+
 Ou seja nas edges ficar mais escuro e no centro mais claro, pensei que isto com o Screen Renderer iria funcionar bem.
 
 Primeiramente utilizei as normais do objeto mais a posição da camera para determinar as partes que estavam viradas para a camera e a partir dai criei :
-![Im11](ImagensRelatorio/Imagem11)
+
+![Im9](ImagensRelatorio/Imagem9.png)
+
 Após isso adicionei suporte para texturas e fiz com que a cor central fosse a cor da textura e a cor das edges serem uma variante mais escura da cor da textura:
-![Im12](ImagensRelatorio/Imagem12)
+
+![Im11](ImagensRelatorio/Imagem11.png)
 
 Após ter feito isto decidi aumentar muito mais a claridade de todos os objetos visto que não há propriamente partes escuras em aguarelas. Outra alteração que fiz foi adicionar o mesmo processo de sample de cores que tinha feito no screen renderer, deste modo seria ainda mais visivel as "manchas" que as aguarelas fazem:
 
+
 Scene Mode s/Samples de cor
-![Im13](ImagensRelatorio/Imagem13)
+
+![Im12](ImagensRelatorio/Imagem12.png)
+
+
 
 Scene Mode c/ Samples de cor
-![Im14](ImagensRelatorio/Imagem14)
+
+![Im13](ImagensRelatorio/Imagem13.png)
+
 
 
 Game Mode s/ Samples de cor
-![Im15](ImagensRelatorio/Imagem15)
+
+![Im14](ImagensRelatorio/Imagem14.png)
 
 
 
 Game Mode c/Samples de cor
-![Im16](ImagensRelatorio/Imagem16)
+
+![Im15](ImagensRelatorio/Imagem15.png)
 
 
 O efeito não é super evidente mas para mim ficava ligeiramente melhor.
 Em seguida comecei a adicionar suporte para sombras, usei como base um dos TPCs feitos para a UC. 
 Após aplicar a funcionalidade para os objetos darem "cast" a sombra implementei também a funcionalidade destes receberem:
-![Im17](ImagensRelatorio/Imagem17)
+
+![Im16](ImagensRelatorio/Imagem116.png)
+
 Inicialmente parecia funcionar mas quando mexia a camera no editor criava artefactos nas meshes como por exemplo:
-![Im18](ImagensRelatorio/Imagem18)
+
+![Im17](ImagensRelatorio/Imagem17.png)
 
 Inicialmente pensei que pudesse ser de Shadow Cascades porque notava-se uma mudança quando passava pelos objetos, mas visto que os objetos com o material default do unity não tinham este efeito rapidamente descartei esta hipótese.
 Ao rever uma das aulas do semestre reparei que era a maneira em como estava a passar a sombra para a Main Light, resolvendo assim a situação. 
 Adicionei às sombras a cor do próprio objeto para tentar fazer com que parecesse um blend de cores mas não tive bem esse resultado, acabou por ficar um pouco estranho:
-![Im19](ImagensRelatorio/Imagem19)
+
+![Im20](ImagensRelatorio/Imagem20.png)
+
 No processo acabei por retirar totalmente a função de Lambert.
 
 Após ter feito isto adicionei também suporte para múltiplas luzes e logo em seguida para luzes baked. Inicialmente não encontrei informações sobre implementação de luzes baked para shaders custom, então procurei nos packages do unity e encontrei dentro do GlobalIllumination, Lighting e ImageBasedRendering e após procurar alguma das funções que econtrei dentro dos ficheiros deparei-me com a seguinte thread  using light probes in a custom vert / frag shader[^8] onde recomendam usar a função SampleSH.
 Infelizmente apenas consegui implementar suporte para luzes extra mas que não estejam baked.
 Sendo este o resultado final do watercolor shader:
-![Im21](ImagensRelatorio/Imagem21)
+
+![Im21](ImagensRelatorio/Imagem21.png)
 
 # Cross Hatching Shader
 Infelizmente devido a ter passado bastante tempo no watercolor shader acabei por não ter tempo para fazer o efeito de Cross Hatching.
